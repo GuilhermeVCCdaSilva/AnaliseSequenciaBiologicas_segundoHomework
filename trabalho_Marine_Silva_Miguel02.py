@@ -2,7 +2,15 @@
 import sys
 
 
-def listaParaString(listaDeSequencias): 
+def listaParaString(listaDeSequencias):
+     '''
+    Converte uma lista em string, acrescentando cada elementos 
+    da "listaDeSequencias" a uma string "listaDeSequencias".
+
+
+    arguments: list - listaDaSequencias
+    return: string - sequencia
+    '''
     sequencia = "" 
     for i in listaDeSequencias: 
         sequencia += i  
@@ -10,12 +18,27 @@ def listaParaString(listaDeSequencias):
 
 
 def obterNomeMaiorTamanho(dicionarioNomeSequencia):
+    '''
+    Devolve o tamanho da chave da sequencia que tem maior tamanho.
+
+
+    argumento: dict - dicionarioNomeSequencia 
+    return: int - maiorTamanho
+    '''
     listaDeChaves = dicionarioNomeSequencia.keys()
     maiorTamanho = max(map(len,listaDeChaves))
     return maiorTamanho
 
 
 def obterFicheiroFasta(argumento):
+    '''
+    Devolve as linhas do ficheiro "fasta" 
+    escrito como argumento
+
+
+    argumento: string - argumento
+    return: list - listaDeLinhas
+    '''
     listaDeLinhas = []
     argumento = sys.argv[1] 
     with open(argumento, 'r') as fasta:
@@ -25,6 +48,16 @@ def obterFicheiroFasta(argumento):
 
 
 def obterDicionarioNomeSequenciaNtax(listaDeLinhas,dicionarioNomeSequencia):
+    '''
+    Percorre linha a linha o ficheiro "FASTA", começando por tirar os "\n". 
+    Em seguida, verifica se têm o sinal de ">" e se for verdade, 
+    cria uma nova chave no dicionário com o nome da sequência  se este nome ainda não existir no dicionário.
+    Asociado ao nome vai uma lista vazia que vai ser acrescentada com as sequências linha a linha até surgir o novo sinal ">" e o processo volta a iterar.
+    No final retorna o dicionário Nome;chave/Sequência;valor
+
+    argumento: list - listaDeLinhas; dict - dicionarioNomeSequencia 
+    return: dict - dicionarioNomeSequencia
+    '''
     dicionarioNomeSequencia = {}
     for linha in listaDeLinhas:
         linha = linha.strip("\n") 
@@ -42,12 +75,23 @@ def obterDicionarioNomeSequenciaNtax(listaDeLinhas,dicionarioNomeSequencia):
 
 
 def escreverNexusAlinhado(dicionarioNomeSequencia):
+    '''
+    Acrescenta ao dicionário os nomes ajustados à direta com o espaçamento do nome com maior tamanho.
+    No Final faz o print com os nomes ajustados e a lista de sequência associada, passada em string única.
+
+    argumento: dict - dicionarioNomeSequencia  
+    '''
     dicionarioNomeSequenciaAlinhado = {nome.rjust(obterNomeMaiorTamanho(dicionarioNomeSequencia)+1) : sequencia for nome, sequencia in dicionarioNomeSequencia.items()}
     for nome, sequencia in dicionarioNomeSequenciaAlinhado.items():
             print(nome,listaParaString(sequencia))    
 
 
 def formatarNexusMrBayes(dicionarioNomeSequencia):
+    '''
+    Formata corretamente o "dicionarioNomeSequencia" para Nexus com o "ntax" e "nchar".
+    É acrescentado também o MrBayes associado com os argumentos "outgroup" e "ngen" escritos pelo utilizador. 
+    argumento: dict - dicionarioNomeSequencia  
+    '''
     ntax = len(dicionarioNomeSequencia.keys())
     nchar = sum(len(i) for i in list(dicionarioNomeSequencia.items())[0][1])
     print("""#NEXUS
