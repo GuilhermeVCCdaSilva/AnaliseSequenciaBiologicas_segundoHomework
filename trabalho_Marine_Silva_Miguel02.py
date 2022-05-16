@@ -1,9 +1,84 @@
 #!/usr/bin/env python3
+
+# Análise de Sequências Biologicas 2021/2022
+# Guilherme Silvam(202000178) (BioINF)
+# Marine Fournier (202000224) (BioINF)
+# Miguel la iglesia (202101030) (BioINF)
+#############################################
 import sys
 
 
+def verificarTamanhoNome(nome):
+    '''
+    Verifica o tamanho do "nome" da sequência e devolve "True" 
+    se for maior que 99 senão devolve "False"
+
+    arguments: string - nome
+    return: boolean
+    '''
+    tamanhoNome = len(nome)
+    if tamanhoNome <= 99:
+        return False
+    return True    
+
+
+def existeNomeDicionario(dicionarioNomeSequencia,nome):
+    '''
+    Verifica se existe o "nome" da sequência no dicionario 
+    se existir devolve "True" senão devolve "False"
+
+    arguments: string - nome; dict - dicionarioNomeSequencia
+    return: boolean
+    '''
+    listaDeNomes = dicionarioNomeSequencia.keys()
+    for i in listaDeNomes:
+        if i == nome:
+            return True
+    return False 
+
+
+def obterNomeDifrenteFormatado(dicionarioNomeSequencia,nome,linha):
+    '''
+    Devolve o "nome" formatado(1):
+    No caso em o tamanmho do nome for maior que 99, alguns nomes podem 
+    repetir-se então a variável "contador" conta esses nomes
+    E assim permite solucionar o problema dos nomes repetidos, acrescentando um 
+    número difrente no final de cada um deles mantendo sempre o mesmo tamanho.
+
+
+    arguments: string - nome; dict - dicionarioNomeSequencia; string - linha
+    return: string - nome
+    '''
+    listaDeNomes = dicionarioNomeSequencia.keys()
+    for i in listaDeNomes:
+        if i == nome:
+           global contador 
+           contador +=1
+    caracteresRetirar = len(str(contador)) 
+    nome = linha[1:100-caracteresRetirar]+str(contador)
+    return nome
+
+
+def obterNomeLimitado(nome,linha,dicionarioNomeSequencia):
+    '''
+    Devolve o "nome" formatado(1):
+    No caso em o tamanmho do nome for maior que 99, alguns nomes podem 
+    repetir-se então a variável "contador" conta esses nomes
+    E assim permite solucionar o problema dos nomes repetidos, acrescentando um 
+    número difrente no final de cada um deles mantendo sempre o mesmo tamanho.
+
+    arguments: string - nome; dict - dicionarioNomeSequencia; string - linha
+    return: string - nome
+    '''
+    if verificarTamanhoNome(nome):
+        nome = linha[1:100]
+        if existeNomeDicionario(dicionarioNomeSequencia,nome): 
+            nome = obterNomeDifrenteFormatado(dicionarioNomeSequencia,nome,linha)
+    return nome
+
+
 def listaParaString(listaDeSequencias):
-     '''
+    '''
     Converte uma lista em string, acrescentando cada elementos 
     da "listaDeSequencias" a uma string "listaDeSequencias".
 
@@ -11,6 +86,7 @@ def listaParaString(listaDeSequencias):
     arguments: list - listaDaSequencias
     return: string - sequencia
     '''
+
     sequencia = "" 
     for i in listaDeSequencias: 
         sequencia += i  
@@ -63,13 +139,10 @@ def obterDicionarioNomeSequenciaNtax(listaDeLinhas,dicionarioNomeSequencia):
         linha = linha.strip("\n") 
         if linha.startswith(">"):
             nome = linha[1:]
-            if nome not in dicionarioNomeSequencia:
-                dicionarioNomeSequencia[nome] = []
-            continue    
+            nome = obterNomeLimitado(nome,linha,dicionarioNomeSequencia)   
+            dicionarioNomeSequencia[nome] = []
+            continue
         sequencia = linha
-        if len(sequencia) > 99:
-            sequencia = "A sequência têm mais de 99 caracteres!"
-            break
         dicionarioNomeSequencia[nome].append(sequencia)
     return dicionarioNomeSequencia
 
@@ -114,6 +187,7 @@ end;""".format(sys.argv[2],sys.argv[3]))
 
 
 if __name__ == '__main__':
+    contador = 0
     argumento = ""
     dicionarioNomeSequencia = ""
     listaDeLinhas = obterFicheiroFasta(argumento)
