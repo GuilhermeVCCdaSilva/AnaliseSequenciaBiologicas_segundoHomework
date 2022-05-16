@@ -5,6 +5,6 @@ O Programa irá apresentar no output o ficheiro.fasta escolhido pelo utilizador 
     Realizado por:
     Marine Fournier 202000224
     Guilherme Silva 202000178
-    Miguel 202101030
+    Miguel La Iglesia 202101030
     
 
